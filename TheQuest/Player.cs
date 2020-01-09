@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 
 namespace TheQuest
@@ -43,21 +40,26 @@ namespace TheQuest
         public void Equip(string weaponName)
         {
             foreach (Weapon weapon in inventory)
-            {
                 if (weapon.Name == weaponName)
                     equipedWeapon = weapon;
-            }
         }
 
         public void Move(Direction direction)
         {
-            base.location = Move(direction, game.Boundaries);
-            if(!game.WeaponInRoom.PickedUp)
+            location = Move(direction, game.Boundaries);
+            if (!game.WeaponInRoom.PickedUp)
             {
                 //verificar que esta cerca
                 //  levantar el arma en la sala (agregar a inventario)
                 //  verificar si es la unica en el inventario
                 //      equiparla
+                if (Nearby(game.WeaponInRoom.Location, MoveInterval))
+                {
+                    inventory.Add(game.WeaponInRoom);
+                    game.WeaponInRoom.PickUpWeapon();
+                    if (inventory.Count == 1)
+                        equipedWeapon = game.WeaponInRoom;
+                }
             }
         }
 
@@ -65,9 +67,20 @@ namespace TheQuest
         {
             //si no tiene arma equipada sale
             //usa el método attack del arma equipada
-            //verificar que es pocion (if (this 'is' that))
+            //verificar que es poción (if (this 'is' that))
             //  verificar que fue usada (as potion)
             //      eliminar del inventario y eliminar el arma equipada
+            if (equipedWeapon == null) return;
+            equipedWeapon.Attack(direction, random);
+            if (equipedWeapon is IPotion)
+            {
+                IPotion potion = equipedWeapon as IPotion;
+                if (potion.Used)
+                {
+                    inventory.Remove(equipedWeapon);
+                    equipedWeapon = null;
+                }
+            }
         }
 
     }

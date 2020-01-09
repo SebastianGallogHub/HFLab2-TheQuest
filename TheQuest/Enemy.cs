@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
+
 namespace TheQuest
 {
     abstract class Enemy : Mover
@@ -13,19 +10,19 @@ namespace TheQuest
         public int HitPoints { get; private set; }
         public bool Dead { get { return HitPoints <= 0; } }
 
-        public Enemy(Game game, Point location, int hitPoints):base(game,location)
+        public Enemy(Game game, Point location, int hitPoints) : base(game, location)
         {
             HitPoints = hitPoints;
         }
 
         public abstract void Move(Random random);
-        
+
         public void Hit(int maxDamage, Random random)
         {
             HitPoints -= random.Next(1, maxDamage);
         }
 
-        public  bool NearPlayer()
+        public bool NearPlayer()
         {
             return Nearby(game.PlayerLocation, NearPlayerDistance);
         }
